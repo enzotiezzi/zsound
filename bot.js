@@ -34,11 +34,14 @@ bot.on('message', function (message) {
 
             var voiceChannel = message.member.voiceChannel;
 
-            if(voiceChannel != undefined && voiceChannel != null){
+            if (voiceChannel != undefined && voiceChannel != null) {
                 voiceChannel.join().then(connection => {
                     console.log("joined channel");
+
                     const stream = ytdl(param, { filter: 'audioonly' });
+
                     const dispatcher = connection.playStream(stream, streamOptions);
+
                     dispatcher.on("end", end => {
                         console.log("left channel");
                         voiceChannel.leave();
