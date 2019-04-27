@@ -1,7 +1,7 @@
 var Discord = require('discord.js');
 var logger = require('winston');
 const ytdl = require('ytdl-core');
-//var auth = require('./auth.json');
+var auth = require('./auth.json');
 
 logger.remove(logger.transports.Console);
 logger.add(logger.transports.Console, {
@@ -34,17 +34,19 @@ bot.on('message', function (message) {
 
             var voiceChannel = message.member.voiceChannel;
 
-            voiceChannel.join().then(connection => {
-                console.log("joined channel");
-                const stream = ytdl(param, { filter: 'audioonly' });
-                const dispatcher = connection.playStream(stream, streamOptions);
-                dispatcher.on("end", end => {
-                    console.log("left channel");
-                    voiceChannel.leave();
-                });
-            }).catch(err => console.log(err));
+            if(voiceChannel != undefined && voiceChannel != null){
+                voiceChannel.join().then(connection => {
+                    console.log("joined channel");
+                    const stream = ytdl(param, { filter: 'audioonly' });
+                    const dispatcher = connection.playStream(stream, streamOptions);
+                    dispatcher.on("end", end => {
+                        console.log("left channel");
+                        voiceChannel.leave();
+                    });
+                }).catch(err => console.log(err));
+            }
         }
     }
 });
 
-bot.login('NTcwOTAwNjAzNDQyNTYxMDI0.XMRUmg.y3GKY3EEvFiqdsxiKXuCAkLYSSk');
+bot.login(auth.token);
