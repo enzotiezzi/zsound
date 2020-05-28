@@ -17,6 +17,9 @@ bot.on('ready', function (evt) {
 });
 
 bot.on('message', function (message) {
+    console.log("message received");
+    console.log(message.content);
+
     var userName = message.author.username + '#' + message.author.discriminator;
 
     if (message.content.substring(0, 1) == '!') {
@@ -30,24 +33,26 @@ bot.on('message', function (message) {
         args = args.splice(1);
 
         if (cmd == "play") {
+            console.log("play");
+
             const streamOptions = { seek: 0, volume: 1 };
 
-            var voiceChannel = message.member.voiceChannel;
-
-            if (voiceChannel != undefined && voiceChannel != null) {
+            bot.channels.fetch(message.member.voice.channelID).then(voiceChannel => {
                 voiceChannel.join().then(connection => {
                     console.log("joined channel");
 
+                    console.log("param: " + param);
+
                     const stream = ytdl(param, { filter: 'audioonly' });
 
-                    const dispatcher = connection.playStream(stream, streamOptions);
+                    const dispatcher = connection.play(stream, streamOptions);
 
                     dispatcher.on("end", end => {
                         console.log("left channel");
                         voiceChannel.leave();
                     });
                 }).catch(err => console.log(err));
-            }
+            });
         }
     }
 });
