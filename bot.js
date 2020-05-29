@@ -1,7 +1,7 @@
 var Discord = require('discord.js');
 var logger = require('winston');
 const ytdl = require('ytdl-core');
-var auth = require('./auth.json');
+//var auth = require('./auth.json');
 
 logger.remove(logger.transports.Console);
 logger.add(logger.transports.Console, {
@@ -57,4 +57,4 @@ bot.on('message', function (message) {
     }
 });
 
-bot.login(process.env.TOKEN || auth.token);
+bot.login(process.env.TOKEN);
