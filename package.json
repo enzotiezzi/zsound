@@ -6,6 +6,9 @@
   "scripts": {
     "start": "node bot.js"
   },
+  "engines": {
+    "node": "11.4.0"
+  },
   "author": "enzo tiezzi",
   "dependencies": {
     "discord.js": "12.2.0",
