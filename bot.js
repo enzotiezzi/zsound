@@ -1,7 +1,7 @@
-var Discord = require('discord.js');
-var logger = require('winston');
+const Discord = require('discord.js');
+const logger = require('winston');
+const auth = require('./auth.json');
 const ytdl = require('ytdl-core');
-//var auth = require('./auth.json');
 
 logger.remove(logger.transports.Console);
 logger.add(logger.transports.Console, {
@@ -23,9 +23,9 @@ bot.on('message', function (message) {
     var userName = message.author.username + '#' + message.author.discriminator;
 
     if (message.content.substring(0, 1) == '!') {
-        var args = message.content.substring(1).split(' ');
-        var cmd = args[0];
-        var param = "";
+        let args = message.content.substring(1).split(' ');
+        let cmd = args[0];
+        let param = "";
 
         if (args.length > 1)
             param = args[1];
@@ -47,8 +47,9 @@ bot.on('message', function (message) {
 
                     const dispatcher = connection.play(stream, streamOptions);
 
-                    dispatcher.on("end", end => {
-                        console.log("left channel");
+                    dispatcher.on('end', end => {
+                        console.log('ending music');
+
                         voiceChannel.leave();
                     });
                 }).catch(err => console.log(err));
@@ -57,4 +58,4 @@ bot.on('message', function (message) {
     }
 });
 
-bot.login(process.env.TOKEN);
+bot.login(auth.TOKEN || process.env.TOKEN);
