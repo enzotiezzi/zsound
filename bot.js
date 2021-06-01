@@ -8,6 +8,8 @@ logger.add(logger.transports.Console, {
     colorize: true
 });
 
+var playlist = [];
+
 var bot = new Discord.Client();
 
 bot.on('ready', function (evt) {
@@ -33,29 +35,54 @@ bot.on('message', function (message) {
         args = args.splice(1);
 
         if (cmd == "play") {
-            console.log("play");
+            playlist = [];
+            playlist.push(param);
+        play();
+        }
+        else if(cmd== "add"){
+            playlist.push(param); 
+            console.log("Link "+ param + " adicionado à playlist")
 
-            const streamOptions = { seek: 0, volume: 1 };
+        }else if(cmd == "playlist"){
+            var textoPlaylist = "Veja aqui suas musicas: \n";
 
-            bot.channels.fetch(message.member.voice.channelID).then(voiceChannel => {
-                voiceChannel.join().then(connection => {
-                    console.log("joined channel");
-
-                    console.log("param: " + param);
-
-                    const stream = ytdl(param, { filter: 'audioonly' });
-
-                    const dispatcher = connection.play(stream, streamOptions);
-
-                    dispatcher.on('end', end => {
-                        console.log('ending music');
-
-                        voiceChannel.leave();
-                    });
-                }).catch(err => console.log(err));
-            });
+            for(var i =0; i<playlist.length;i++){
+                textoPlaylist = textoPlaylist + playlist[i]+ "\n";
+            }
+            
+            message.reply(textoPlaylist);
         }
     }
+    function play(){
+        console.log("play");
+    
+        const streamOptions = { seek: 0, volume: 1 };
+    
+      bot.channels.fetch(message.member.voice.channelID).then(voiceChannel => {
+            voiceChannel.join().then(connection => {
+                console.log("joined channel");
+    
+                console.log("param: " + playlist[0]);
+    
+                const stream = ytdl(playlist[0], { filter: 'audioonly' })
+    
+                const dispatcher = connection.play(stream, streamOptions).on("finish", ()=>{
+                    if(playlist.length==1){
+                        console.log('ending music');
+                }else{
+                    console.log("Next music");
+                  playlist.shift();
+                  play();
+                  };
+                });
+
+            }).catch(err => console.log(err));
+        });
+    };
+
 });
 
+
+
+//bot.login(auth.TOKEN || process.env.TOKEN);
 bot.login(process.env.TOKEN);
